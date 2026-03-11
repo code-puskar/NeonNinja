@@ -1,0 +1,20 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play Store (Internal Track)"
+  lane :beta do
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/Android/NeonNinja.aab'
+    )
+  end
+end
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Assuming Unity builder creates an xcodeproj in build/iOS
+    build_app(project: "../build/iOS/Unity-iPhone.xcodeproj", scheme: "Unity-iPhone")
+    upload_to_testflight
+  end
+end

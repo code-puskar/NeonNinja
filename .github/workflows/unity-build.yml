@@ -1,0 +1,64 @@
+name: Unity Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  buildForAndroid:
+    name: Build for Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Cache Unity Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-Android
+          restore-keys: |
+            Library-
+
+      - name: Build Android App
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          targetPlatform: Android
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build-Android
+          path: build/Android
+
+  buildForiOS:
+    name: Build for iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Cache Unity Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-iOS
+          restore-keys: |
+            Library-
+
+      - name: Build iOS Xcode Project
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          targetPlatform: iOS
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build-iOS
+          path: build/iOS
